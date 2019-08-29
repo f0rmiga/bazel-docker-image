@@ -15,4 +15,4 @@ fi
 
 docker build --build-arg version="${VERSION}" -t "${image_repository}:${VERSION}" .
 
->&1 echo "${image_repository}:${VERSION}"
+echo "${image_repository}:${VERSION}" > /tmp/image.txt
