@@ -22,7 +22,7 @@ jobs:
     - name: Build
       uses: actions/docker/cli@master
       with:
-        entrypoint: bash
+        entrypoint: /bin/sh
         args: build.sh
       env:
         OUT: /tmp/image.txt
