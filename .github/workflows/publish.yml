@@ -14,23 +14,30 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Check image
+      id: check
       run: ./check.sh
+      continue-on-error: true
       env:
         VERSION_FILE: version
         IMAGE_FILE: image
 
     - name: Docker login
+      id: docker-login
+      if: job.steps.check.status == 'success'
       uses: actions/docker/login@master
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Build
+      id: docker-build
+      if: job.steps.docker-login.status == 'success'
       uses: actions/docker/cli@master
       with:
         args: build --build-arg version="$(cat version)" -t "$(cat image)" .
 
     - name: Publish
+      if: job.steps.docker-build.status == 'success'
       uses: actions/docker/cli@master
       with:
         args: push "$(cat image)"
