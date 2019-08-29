@@ -25,12 +25,6 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Pull
-      continue-on-error: true
-      uses: actions/docker/cli@master
-      with:
-        args: pull "$(cat image)"
-
     - name: Build
       uses: actions/docker/cli@master
       with:
