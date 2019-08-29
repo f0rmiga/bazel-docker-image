@@ -1,0 +1,21 @@
+name: Build and publish
+
+on:
+  push:
+    branches:
+    - master
+  schedule:
+  - cron: 0 0 * * *
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
+      run: ./build.sh
+
+    - name: Docker login
+      uses: actions/docker/login@master
+      secrets: [DOCKER_USERNAME, DOCKER_PASSWORD]
