@@ -13,8 +13,10 @@ RUN bash /tmp/bazel.installer
 # ==========================================================
 FROM opensuse/leap:15.1
 RUN zypper --non-interactive install \
+      gcc \
       java-11-openjdk \
       java-11-openjdk-devel \
+      python3 \
       && zypper clean
 COPY --from=installer /usr/local/bin/bazel /usr/local/bin/bazel
 COPY --from=installer /usr/local/bin/bazel-real /usr/local/lib/bazel-real
