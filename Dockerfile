@@ -16,4 +16,6 @@ RUN zypper --non-interactive install \
       java-11-openjdk \
       java-11-openjdk-devel \
       && zypper clean
+COPY --from=installer /usr/local/bin/bazel /usr/local/bin/bazel
+COPY --from=installer /usr/local/bin/bazel-real /usr/local/lib/bazel-real
 COPY --from=installer /usr/local/lib/bazel /usr/local/lib/bazel
