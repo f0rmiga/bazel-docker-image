@@ -13,6 +13,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Check image
+      run: ./check.sh
+      env:
+        VERSION_FILE: version
+        IMAGE_FILE: image
+
     - name: Docker login
       uses: actions/docker/login@master
       env:
@@ -22,12 +28,9 @@ jobs:
     - name: Build
       uses: actions/docker/cli@master
       with:
-        entrypoint: /bin/sh
-        args: build.sh
-      env:
-        OUT: /tmp/image.txt
+        args: build --build-arg version="$(cat version)" -t "$(cat image)" .
 
     - name: Publish
       uses: actions/docker/cli@master
       with:
-        args: push $(cat /tmp/image.txt)
+        args: push "$(cat image)"
