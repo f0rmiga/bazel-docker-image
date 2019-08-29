@@ -13,14 +13,21 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Build
-      run: ./build.sh
-
     - name: Docker login
       uses: actions/docker/login@master
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Build
+      uses: actions/docker/cli@master
+      with:
+        entrypoint: bash
+        args: build.sh
+      env:
+        OUT: /tmp/image.txt
+
     - name: Publish
-      run: docker push $(cat /tmp/image.txt)
+      uses: actions/docker/cli@master
+      with:
+        args: push $(cat /tmp/image.txt)
