@@ -18,6 +18,5 @@ RUN zypper --non-interactive install \
       java-11-openjdk-devel \
       python3 \
       && zypper clean
-COPY --from=installer /usr/local/bin/bazel /usr/local/bin/bazel
-COPY --from=installer /usr/local/bin/bazel-real /usr/local/lib/bazel-real
 COPY --from=installer /usr/local/lib/bazel /usr/local/lib/bazel
+RUN ln -s /usr/local/lib/bazel/bin/bazel /usr/local/bin/bazel
