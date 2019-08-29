@@ -14,37 +14,29 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Fetch info
-      id: fetch-info
       run: ./fetch_info.sh
       env:
         VERSION_FILE: version
         IMAGE_FILE: image
 
     - name: Docker login
-      id: docker-login
-      if: job.steps.fetch-info.status == 'success'
       uses: actions/docker/login@master
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Pull
-      id: pull
-      if: job.steps.docker-login.status == 'success'
       continue-on-error: true
       uses: actions/docker/cli@master
       with:
         args: pull "$(cat image)"
 
     - name: Build
-      id: docker-build
-      if: job.steps.docker-login.status == 'success'
       uses: actions/docker/cli@master
       with:
         args: build --build-arg version="$(cat version)" -t "$(cat image)" .
 
     - name: Publish
-      if: job.steps.docker-build.status == 'success'
       uses: actions/docker/cli@master
       with:
         args: push "$(cat image)"
