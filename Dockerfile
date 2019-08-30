@@ -1,26 +1,29 @@
-FROM opensuse/leap:15.1 AS installer
+FROM opensuse/leap:15.1 AS baselayer
 RUN zypper --non-interactive install \
       curl \
-      java-11-openjdk \
-      java-11-openjdk-devel \
-      unzip \
-      which \
-      && zypper clean
-ARG version
-RUN curl -L https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-installer-linux-x86_64.sh -o /tmp/bazel.installer
-RUN bash /tmp/bazel.installer
-
-# ==========================================================
-FROM opensuse/leap:15.1
-RUN zypper --non-interactive install \
       gcc \
       gzip \
       java-11-openjdk \
       java-11-openjdk-devel \
       python \
       python3 \
+      sudo \
       tar \
+      unzip \
       which \
       && zypper clean
-COPY --from=installer /usr/local/lib/bazel /usr/local/lib/bazel
-RUN ln -s /usr/local/lib/bazel/bin/bazel /usr/local/bin/bazel
+RUN groupadd --gid 115 runner \
+      && useradd --system --create-home --uid 1001 --gid runner runner
+RUN echo "%runner ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/runner
+USER runner
+
+# ==========================================================
+FROM baselayer AS installer
+ARG version
+RUN curl -L https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-installer-linux-x86_64.sh -o /tmp/bazel.installer
+RUN bash /tmp/bazel.installer --user
+
+# ==========================================================
+FROM baselayer
+COPY --from=installer /home/runner /home/runner
+RUN sudo ln -s /home/runner/bin/bazel /usr/local/bin/bazel
