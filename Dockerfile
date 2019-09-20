@@ -2,6 +2,7 @@ FROM opensuse/leap:15.1 AS baselayer
 RUN zypper --non-interactive install \
       curl \
       gcc \
+      git \
       gzip \
       java-11-openjdk \
       java-11-openjdk-devel \
