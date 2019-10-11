@@ -16,21 +16,16 @@ jobs:
     - name: Fetch info
       run: ./fetch_info.sh
       env:
-        VERSION_FILE: version
-        IMAGE_FILE: image
+        IMAGE_REPOSITORY: docker.pkg.github.com/f0rmiga/bazel-docker-image/bazel
+        VERSION_FILE: version.txt
 
     - name: Docker login
-      uses: actions/docker/login@master
+      run: docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
 
     - name: Build
-      uses: actions/docker/cli@master
-      with:
-        args: build --build-arg version="$(cat version)" -t "$(cat image)" .
+      run: docker build --build-arg version="$(cat version)" -t "docker.pkg.github.com/f0rmiga/bazel-docker-image/bazel:$(cat version.txt)" .
 
     - name: Publish
-      uses: actions/docker/cli@master
-      with:
-        args: push "$(cat image)"
+      run: docker push "docker.pkg.github.com/f0rmiga/bazel-docker-image/bazel:$(cat version.txt)"
