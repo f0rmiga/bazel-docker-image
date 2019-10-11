@@ -20,17 +20,12 @@ jobs:
         IMAGE_FILE: image
 
     - name: Docker login
-      uses: actions/docker/login@master
+      run: docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
       env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
 
     - name: Build
-      uses: actions/docker/cli@master
-      with:
-        args: build --build-arg version="$(cat version)" -t "$(cat image)" .
+      run: docker build --build-arg version="$(cat version)" -t "$(cat image)" .
 
     - name: Publish
-      uses: actions/docker/cli@master
-      with:
-        args: push "$(cat image)"
+      run: docker push "$(cat image)"
