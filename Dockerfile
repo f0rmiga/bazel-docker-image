@@ -8,6 +8,7 @@ RUN zypper --non-interactive install \
       java-11-openjdk-devel \
       python \
       python3 \
+      pip \
       sudo \
       tar \
       unzip \
