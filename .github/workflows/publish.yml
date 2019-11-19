@@ -20,12 +20,12 @@ jobs:
         VERSION_FILE: version.txt
 
     - name: Docker login
-      run: docker login docker.pkg.github.com -u publisher -p "${GITHUB_TOKEN}"
+      run: docker login --username thulioassis --password-stdin <<<"${DOCKERHUB_TOKEN}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build
-      run: docker build --build-arg version="$(cat version.txt)" -t "docker.pkg.github.com/f0rmiga/bazel-docker-image/bazel:$(cat version.txt)" .
+      run: docker build --build-arg version="$(cat version.txt)" -t "thulioassis/bazel-docker-image/bazel:$(cat version.txt)" .
 
     - name: Publish
-      run: docker push "docker.pkg.github.com/f0rmiga/bazel-docker-image/bazel:$(cat version.txt)"
+      run: docker push "thulioassis/bazel-docker-image/bazel:$(cat version.txt)"
