@@ -18,10 +18,10 @@ RUN zypper --non-interactive install \
 RUN groupadd --gid 115 runner \
       && useradd --system --create-home --uid 1001 --gid runner runner
 RUN echo "%runner ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/runner
-USER runner
 
 # ==========================================================
 FROM baselayer AS installer
+USER runner
 ARG version
 RUN curl -L https://github.com/bazelbuild/bazel/releases/download/${version}/bazel-${version}-installer-linux-x86_64.sh -o /tmp/bazel.installer
 RUN bash /tmp/bazel.installer --user
@@ -29,4 +29,5 @@ RUN bash /tmp/bazel.installer --user
 # ==========================================================
 FROM baselayer
 COPY --from=installer /home/runner /home/runner
-RUN sudo ln -s /home/runner/bin/bazel /usr/local/bin/bazel
+RUN ln -s /home/runner/bin/bazel /usr/local/bin/bazel
+USER runner
