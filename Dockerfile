@@ -4,6 +4,8 @@ RUN zypper --non-interactive install \
       gcc \
       git \
       gzip \
+      iproute2 \
+      iptables \
       java-11-openjdk \
       java-11-openjdk-devel \
       python \
