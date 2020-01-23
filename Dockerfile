@@ -13,6 +13,7 @@ RUN zypper --non-interactive install \
       python3 \
       python2-pip \
       python3-pip \
+      ruby \
       sudo \
       tar \
       unzip \
