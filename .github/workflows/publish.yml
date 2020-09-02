@@ -1,9 +1,12 @@
 name: Build and publish
 
 on:
-  push:
-    branches:
-    - master
+  workflow_dispatch:
+    inputs:
+      image_repository:
+        description: The image repository.
+        required: true
+        default: ${{ github.repository_owner }}/${{ github.repository }}/bazel
   schedule:
   - cron: 0 0 * * *
 
@@ -25,7 +28,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GH_REGISTRY_PASSWORD }}
         registry: ghcr.io
-        repository: ${{ github.repository_owner }}/${{ github.repository }}/bazel
+        repository: ${{ github.event.inputs.image_repository }}
         tags: >-
           ${{ steps.fetch_info.outputs.version }}
         build_args: >-
