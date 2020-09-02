@@ -18,7 +18,7 @@ jobs:
       id: determine_version
       run: |-
         set -o errexit -o nounset
-        if [ -z "${{ github.event.inputs.bazel_version }}" ]; then
+        if [ -n "${{ github.event.inputs.bazel_version }}" ]; then
           version="${{ github.event.inputs.bazel_version }}"
         else
           latest_bazel_url="https://api.github.com/repos/bazelbuild/bazel/releases/latest"
