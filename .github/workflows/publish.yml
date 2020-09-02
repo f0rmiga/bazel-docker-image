@@ -3,10 +3,9 @@ name: Build and publish
 on:
   workflow_dispatch:
     inputs:
-      image_repository:
-        description: The image repository.
-        required: true
-        default: ${{ github.repository_owner }}/${{ github.repository }}/bazel
+      bazel_version:
+        description: A Bazel version to override latest.
+        required: false
   schedule:
   - cron: 0 0 * * *
 
@@ -15,12 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Fetch info
-      id: fetch_info
+    - name: Determine version
+      id: determine_version
       run: |-
         set -o errexit -o nounset
-        latest_bazel_url="https://api.github.com/repos/bazelbuild/bazel/releases/latest"
-        version=$(curl --fail --silent --show-error "${latest_bazel_url}" | awk 'match($0, /"tag_name": "(.*)"/, cg) { print cg[1] }')
+        if [ -z "${{ github.event.inputs.bazel_version }}" ]; then
+          version="${{ github.event.inputs.bazel_version }}"
+        else
+          latest_bazel_url="https://api.github.com/repos/bazelbuild/bazel/releases/latest"
+          version=$(curl --fail --silent --show-error "${latest_bazel_url}" | awk 'match($0, /"tag_name": "(.*)"/, cg) { print cg[1] }')
+        fi
         echo "::set-output name=version::${version}"
     - name: Build and push
       uses: docker/build-push-action@v1
@@ -28,12 +31,12 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GH_REGISTRY_PASSWORD }}
         registry: ghcr.io
-        repository: ${{ github.event.inputs.image_repository }}
+        repository: ${{ github.repository_owner }}/${{ github.repository }}/bazel
         tags: >-
-          ${{ steps.fetch_info.outputs.version }}
+          ${{ steps.determine_version.outputs.version }}
         build_args: >-
-          version=${{ steps.fetch_info.outputs.version }}
+          version=${{ steps.determine_version.outputs.version }}
         labels: >-
-          org.opencontainers.image.version=${{ steps.fetch_info.outputs.version }}
+          org.opencontainers.image.version=${{ steps.determine_version.outputs.version }}
         add_git_labels: true
         always_pull: true
