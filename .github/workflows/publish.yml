@@ -24,7 +24,7 @@ jobs:
       with:
         username: ${{ github.actor }}
         password: ${{ secrets.GH_REGISTRY_PASSWORD }}
-        registry: https://ghcr.io
+        registry: ghcr.io
         repository: ${{ github.repository_owner }}/bazel
         tags: >-
           ${{ steps.fetch_info.outputs.version }}
