@@ -31,7 +31,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GH_REGISTRY_PASSWORD }}
         registry: ghcr.io
-        repository: ${{ github.repository_owner }}/${{ github.repository }}/bazel
+        repository: ${{ github.repository }}/bazel
         tags: >-
           ${{ steps.determine_version.outputs.version }}
         build_args: >-
